@@ -2,7 +2,11 @@
 
 Azure Logic App triggered by Azure Storage Blobs, executing an ACI container with DotNet Core code
 
-## Project Creation - DotNet Core Containerized App
+---
+
+## DotNet Core Project Creation
+
+### Bootstrap the DotNet Core Project
 
 ```
 $ dotnet --version
@@ -15,6 +19,13 @@ $ dotnet run
 Hello World!
 ```
 
+### Create and Execute the Docker Container
+
 ```
-$ docker build -t cjoakim/azure-blobs-core .
+$ ./containerize.sh 
+$ docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
 ```
+
+---
+
+## Azure Logic App Creation
