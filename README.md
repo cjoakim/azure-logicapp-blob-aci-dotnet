@@ -29,3 +29,10 @@ $ docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
 ---
 
 ## Azure Logic App Creation
+
+---
+
+## Links
+
+-  https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet-legacy
+- https://www.klaine.net/example-azure-container-instances-with-logic-apps/

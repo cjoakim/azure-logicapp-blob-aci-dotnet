@@ -19,8 +19,6 @@ echo 'done'
 
 # ./containerize.sh 
 #
-# docker build -t cjoakim/azure-blobs-core . 
-#
 # docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
 # 
 # docker push cjoakim/azure-blobs-core:latest
