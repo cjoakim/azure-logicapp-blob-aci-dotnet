@@ -3,6 +3,9 @@ services:
   main:
     image: cjoakim/azure-blobs-core:latest
     environment:
-    - xxx=xxx
-    - yyy=yyy
-    - zzz=zzz
+    - AZURE_STORAGE_ACCOUNT=${AZURE_STORAGE_ACCOUNT}
+    - AZURE_STORAGE_KEY=${AZURE_STORAGE_KEY}
+    - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
+    - BLOB_ID=JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2
+    - BLOB_PATH=/simulations/postal_codes_nc.csv
+    - BLOB_NAME=postal_codes_nc.csv
