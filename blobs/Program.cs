@@ -10,7 +10,7 @@ namespace blobs
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("starting");
 
             if (args.Length == 0)
             {
@@ -28,9 +28,24 @@ namespace blobs
             {
                 Console.WriteLine("{0} = {1}", de.Key, de.Value);
             }
-                
-            System.Threading.Thread.Sleep(20000);
+
+            Console.WriteLine("sleeping");
+            System.Threading.Thread.Sleep(10000);
             Console.WriteLine("exiting");
         }
     }
 }
+
+//{
+//  "Id": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfY3QuY3N2",
+//  "Name": "postal_codes_ct.csv",
+//  "DisplayName": "postal_codes_ct.csv",
+//  "Path": "/simulations/postal_codes_ct.csv",
+//  "LastModified": "2020-02-24T21:15:12Z",
+//  "Size": 24394,
+//  "MediaType": "text/csv",
+//  "IsFolder": false,
+//  "ETag": "\"0x8D7B96EA3067BB7\"",
+//  "FileLocator": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfY3QuY3N2",
+//  "LastModifiedBy": null
+//}

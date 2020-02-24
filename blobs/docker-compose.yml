@@ -1,0 +1,8 @@
+version: '3'
+services:
+  main:
+    image: cjoakim/azure-blobs-core:latest
+    environment:
+    - xxx=xxx
+    - yyy=yyy
+    - zzz=zzz
