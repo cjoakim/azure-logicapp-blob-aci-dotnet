@@ -2,7 +2,7 @@
 
 # Bash script to create a Docker container for this dotnet core project.
 # See https://docs.microsoft.com/en-us/dotnet/core/docker/build-container
-# Chris Joakim, Microsoft, 2020/02/24
+# Chris Joakim, Microsoft, 2020/02/25
 
 container_name="cjoakim/azure-blobs-core"
 
