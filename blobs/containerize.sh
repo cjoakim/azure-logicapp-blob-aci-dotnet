@@ -18,7 +18,4 @@ docker images | grep $container_name
 echo 'done'
 
 # ./containerize.sh 
-#
-# docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
-# 
 # docker push cjoakim/azure-blobs-core:latest

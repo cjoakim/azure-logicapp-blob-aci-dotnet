@@ -3,11 +3,13 @@ services:
   main:
     image: cjoakim/azure-blobs-core:latest
     environment:
-    - POPULATE_STORAGE_BLOBS=true
-    - POPULATE_STORAGE_COUNT=10
+    - RUNTYPE=populate_storage_blobs
+    - POPULATE_STORAGE_COUNT=3
+    - POPULATE_STORAGE_DELAY=10
     - AZURE_STORAGE_ACCOUNT=${AZURE_STORAGE_ACCOUNT}
     - AZURE_STORAGE_KEY=${AZURE_STORAGE_KEY}
     - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
-    - BLOB_ID=JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2
-    - BLOB_PATH=/simulations/postal_codes_nc.csv
-    - BLOB_NAME=postal_codes_nc.csv
+    - SOURCE_BLOB_ID=JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2
+    - SOURCE_BLOB_PATH=/simulations/postal_codes_nc.csv
+    - SOURCE_BLOB_NAME=postal_codes_nc.csv
+    - TARGET_BLOB_CONTAINER=processed
