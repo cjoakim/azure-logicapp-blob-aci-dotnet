@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.3.0" />
+    <PackageReference Include="Joakimsoftware.M26" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

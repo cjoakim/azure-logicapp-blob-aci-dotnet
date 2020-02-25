@@ -34,6 +34,26 @@ $ docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
 
 ![logic-app-designer](img/logic-app-designer.png)
 
+### Sample Blob Trigger JSON
+
+The JSON triggerBody() looks like this:
+
+```
+{
+  "Id": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
+  "Name": "postal_codes_nc.csv",
+  "DisplayName": "postal_codes_nc.csv",
+  "Path": "/simulations/postal_codes_nc.csv",
+  "LastModified": "2020-02-24T22:13:23Z",
+  "Size": 61273,
+  "MediaType": "text/csv",
+  "IsFolder": false,
+  "ETag": "\"0x8D7B976C3E20740\"",
+  "FileLocator": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
+  "LastModifiedBy": null
+}
+```
+
 ### Azure Logic App Code View 
 
 ```
@@ -189,9 +209,13 @@ $ docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
 }
 ```
 
+
+
 ---
 
 ## Links
 
-- https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet-legacy
+- https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet
 - https://www.klaine.net/example-azure-container-instances-with-logic-apps/
+- https://www.nuget.org/packages/Joakimsoftware.M26/
+- https://github.com/cjoakim/m26-cs
