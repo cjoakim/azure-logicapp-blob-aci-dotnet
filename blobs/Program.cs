@@ -163,7 +163,7 @@ namespace blobs
                         // place,overall_place,name,city_st,bib,age,10K_rank,10K_time,bridge1_rank,bridge1_time,23m_rank,23m_time,finish_rank,finish_time,chip_time,gun_time
 
                         Calculation c = new Calculation(content);
-                        Console.WriteLine("json: {0}", c.toJSON());
+                        Console.WriteLine("json:\n{0}", c.toJSON());
 
                         //string name = tokens[2];
                         //string[] gunTimeTokens = tokens[15].Split(":");
@@ -250,6 +250,7 @@ namespace blobs
 
     class Calculation {
 
+        // 16 input csv fields:
         public int    place { get; set; }
         public int    overallPlace { get; set; }
         public string name { get; set; }
@@ -266,6 +267,9 @@ namespace blobs
         public string finishTime { get; set; }
         public string chipTime { get; set; }
         public string gunTime { get; set; }
+
+        // additional calculated fields:
+        public double miles { get; set; }
 
         public Calculation(string csvLine) {
             string[] tokens = csvLine.Split("|");
@@ -288,8 +292,10 @@ namespace blobs
                 gunTime      = tokens[15];
 
                 //string name = tokens[2];
-                //string[] gunTimeTokens = tokens[15].Split(":");
-                //Distance d = new Distance(26.2);
+                string[] gunTimeTokens = tokens[15].Split(":");
+                Distance d = new Distance(26.2);
+                this.miles = d.asMiles();
+
                 //ElapsedTime et = new ElapsedTime(
                 //    int.Parse(gunTimeTokens[0]),
                 //    int.Parse(gunTimeTokens[1]),
@@ -316,7 +322,11 @@ namespace blobs
         }
 
         public string toJSON() {
-            return JsonSerializer.Serialize<Calculation>(this);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            return JsonSerializer.Serialize<Calculation>(this, options);
         }
     }
 }
