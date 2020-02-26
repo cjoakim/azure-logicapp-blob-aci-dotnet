@@ -1,24 +1,21 @@
-﻿
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
+﻿using Azure.Storage.Blobs;
 using System;
-using System.Collections;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Joakimsoftware.M26;
-
 
 namespace blobs
 {
+    // This class executes BOTH of the following functions:
+    // 1) It is used to populate the triggering storage container with CSV data from 
+    //    randomly selected rows in the 'data/20190317-asheville-marathon.csv' file.
+    //    This is done to trigger the Azure Logic App.
+    // 2) Is is also the logic in the Azure Container Instance (ACI) that is executed
+    //    by the Azure Logic app, as a result of the Logic App being triggered by a
+    //    new csv-blob in the Azure Storage container.  This logic will parse the csv,
+    //    execute M26-library pace and speed calculations, and store the resulting JSON
+    //    object in the target Storage container.
 
     class Program
     {
-        static int TEN_SECONDS = 10000;
-        static string DEFAULT_SOURCE_CONTAINER = "simulations";
-        static string DEFAULT_TARGET_CONTAINER = "processed";
-        static int DEFAULT_RANDOMNESS = 5;  // a percentage, 5% of csv rows read
         static Random random = new Random();
         static DateTime epochDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -51,12 +48,13 @@ namespace blobs
         {
             try
             {
-                displayEnvVars();
-                runtype = EnvVar("RUNTYPE", "undefined");
+                EnvVars.displayAll();
+                runtype = EnvVars.value(Constants.RUNTYPE, "undefined");
                 Console.WriteLine("start() runtype is: {0}", runtype);
                 sourceBlobContainerName = getSourceBlobContainerName();
-                targetBlobContainerName = EnvVar("TARGET_BLOB_CONTAINER", DEFAULT_TARGET_CONTAINER);
-                storageConnectionString = EnvVar("AZURE_STORAGE_CONNECTION_STRING");
+                targetBlobContainerName = EnvVars.value(Constants.TARGET_BLOB_CONTAINER, Constants.DEFAULT_TARGET_CONTAINER);
+                storageConnectionString = EnvVars.value(Constants.AZURE_STORAGE_CONNECTION_STRING);
+
                 Console.WriteLine("sourceBlobContainerName: {0}", sourceBlobContainerName);
                 Console.WriteLine("targetBlobContainerName: {0}", targetBlobContainerName);
                 Console.WriteLine("storageConnectionString: {0}", storageConnectionString);
@@ -77,6 +75,7 @@ namespace blobs
         {
             string[] csvLines = readCsvDataFile();
             int randomness = populateStorageRandomness();
+            int sleepMs = EnvVars.intValue(Constants.POPULATE_STORAGE_DELAY, Constants.DEFAULT_POPULATE_STORAGE_DELAY);
             Console.WriteLine("populateStorageBlobs(), randomness: {0}", randomness);
 
             for (int i = 0; i < csvLines.Length; i++)
@@ -120,12 +119,14 @@ namespace blobs
         {
             try
             {
-                return int.Parse(EnvVar("POPULATE_STORAGE_RANDOMNESS", "" + DEFAULT_RANDOMNESS));
+                return EnvVars.intValue(
+                        Constants.POPULATE_STORAGE_RANDOM_PCT,
+                        Constants.DEFAULT_POPULATE_STORAGE_RANDOM_PCT);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception in populateStorageRandomness(): {0}", e);
-                return DEFAULT_RANDOMNESS;
+                return Constants.DEFAULT_POPULATE_STORAGE_RANDOM_PCT;
             }
         }
 
@@ -139,7 +140,7 @@ namespace blobs
 
         static void logicAppProcessBlob()
         {
-            string sourceBlobName = EnvVar("SOURCE_BLOB_NAME");
+            string sourceBlobName = EnvVars.value(Constants.SOURCE_BLOB_NAME);
             if (sourceBlobName != null)
             {
                 Console.WriteLine("logicAppProcessBlob: {0} in {1}", sourceBlobName, sourceBlobContainerName);
@@ -156,44 +157,19 @@ namespace blobs
                 {
                     Console.WriteLine("downloaded blob content: {0}", content);
                     char[] charSeparators = new char[] { '|' };
-                    string path = EnvVar("SOURCE_BLOB_PATH");
+                    string path = EnvVars.value(Constants.SOURCE_BLOB_PATH);
                     string[] tokens = content.Split("|");
                     if (tokens.Length == 16) {
-                        //   0          1       2     3      4   5     6        7            8            9        10       11        12           13         14       15
-                        // place,overall_place,name,city_st,bib,age,10K_rank,10K_time,bridge1_rank,bridge1_time,23m_rank,23m_time,finish_rank,finish_time,chip_time,gun_time
-
                         Calculation c = new Calculation(content);
-                        Console.WriteLine("json:\n{0}", c.toJSON());
-
-                        //string name = tokens[2];
-                        //string[] gunTimeTokens = tokens[15].Split(":");
-                        //Distance d = new Distance(26.2);
-                        //ElapsedTime et = new ElapsedTime(
-                        //    int.Parse(gunTimeTokens[0]),
-                        //    int.Parse(gunTimeTokens[1]),
-                        //    (int)decimal.Parse(gunTimeTokens[2]));
-
-                        //Speed sp = new Speed(d, et);
-                        //Console.WriteLine("name: {0}", name);
-                        //double mph = sp.mph();
-                        //double kph = sp.kph();
-                        //double yph = sp.yph();
-                        //double spm = sp.secondsPerMile();
-                        //string ppm = sp.pacePerMile();
-                        //Console.WriteLine($"Speed - mph:             {mph}");
-                        //Console.WriteLine($"Speed - kph:             {kph}");
-                        //Console.WriteLine($"Speed - yph:             {yph}");
-                        //Console.WriteLine($"Speed - secondsPerMile:  {spm}");
-                        //Console.WriteLine($"Speed - pacePerMile:     {ppm}");
+                        string json = c.toJSON();
+                        Console.WriteLine("json:\n{0}", json);
 
                     }
                 }
             }
 
-
-
-            Console.WriteLine("logicAppProcessBlob() finish, sleep for: {0}", TEN_SECONDS);
-            sleep(TEN_SECONDS);
+            Console.WriteLine("logicAppProcessBlob() finish, sleep for: {0}", Constants.LOGIC_APP_SHUTDOWN_DELAY_MS);
+            sleep(Constants.LOGIC_APP_SHUTDOWN_DELAY_MS);
         }
 
         static int toInt(string s) {
@@ -203,10 +179,10 @@ namespace blobs
         static string getSourceBlobContainerName()
         {
             char[] charSeparators = new char[] { '/' };
-            string path = EnvVar("SOURCE_BLOB_PATH");
+            string path = EnvVars.value(Constants.SOURCE_BLOB_PATH);
             if (path == null)
             {
-                return DEFAULT_SOURCE_CONTAINER;
+                return Constants.DEFAULT_SOURCE_CONTAINER;
             }
             else
             {
@@ -218,129 +194,5 @@ namespace blobs
         {
             System.Threading.Thread.Sleep(milliseconds);
         }
-
-        static void displayEnvVars()
-        {
-            foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
-            {
-                Console.WriteLine("EnvVar: {0} = {1}", de.Key, de.Value);
-            }
-        }
-
-        static string EnvVar(string name, string defaultValue = null)
-        {
-            if (name != null)
-            {
-                String value = Environment.GetEnvironmentVariable(name);
-                if (value == null)
-                {
-                    return defaultValue;
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            else
-            {
-                return defaultValue;
-            }
-        }
-    }
-
-    class Calculation {
-
-        // 16 input csv fields:
-        public int    place { get; set; }
-        public int    overallPlace { get; set; }
-        public string name { get; set; }
-        public string citySt { get; set; }
-        public int    bib { get; set; }
-        public int    age { get; set; }
-        public int    rank10K { get; set; }
-        public string time10K { get; set; }
-        public int    rankBridge { get; set; }
-        public string timeBridge { get; set; }
-        public int    rank23M { get; set; }
-        public string time23M { get; set; }
-        public int    finishRank { get; set; }
-        public string finishTime { get; set; }
-        public string chipTime { get; set; }
-        public string gunTime { get; set; }
-
-        // additional calculated fields:
-        public double miles { get; set; }
-
-        public Calculation(string csvLine) {
-            string[] tokens = csvLine.Split("|");
-            if (tokens.Length == 16) {
-                place        = toInt(tokens[0]);
-                overallPlace = toInt(tokens[1]);
-                name         = tokens[2];
-                citySt       = tokens[3];
-                bib          = toInt(tokens[4]);
-                age          = toInt(tokens[5]);
-                rank10K      = toInt(tokens[6]);
-                time10K      = tokens[7];
-                rankBridge   = toInt(tokens[8]);
-                timeBridge   = tokens[9];
-                rank23M      = toInt(tokens[10]);
-                time23M      = tokens[11];
-                finishRank   = toInt(tokens[12]);
-                finishTime   = tokens[13];
-                chipTime     = tokens[14];
-                gunTime      = tokens[15];
-
-                //string name = tokens[2];
-                string[] gunTimeTokens = tokens[15].Split(":");
-                Distance d = new Distance(26.2);
-                this.miles = d.asMiles();
-
-                //ElapsedTime et = new ElapsedTime(
-                //    int.Parse(gunTimeTokens[0]),
-                //    int.Parse(gunTimeTokens[1]),
-                //    (int)decimal.Parse(gunTimeTokens[2]));
-
-                //Speed sp = new Speed(d, et);
-                //Console.WriteLine("name: {0}", name);
-                //double mph = sp.mph();
-                //double kph = sp.kph();
-                //double yph = sp.yph();
-                //double spm = sp.secondsPerMile();
-                //string ppm = sp.pacePerMile();
-                //Console.WriteLine($"Speed - mph:             {mph}");
-                //Console.WriteLine($"Speed - kph:             {kph}");
-                //Console.WriteLine($"Speed - yph:             {yph}");
-                //Console.WriteLine($"Speed - secondsPerMile:  {spm}");
-                //Console.WriteLine($"Speed - pacePerMile:     {ppm}");
-
-            }
-        }
-
-        int toInt(string s) {
-            return (int)decimal.Parse(s);
-        }
-
-        public string toJSON() {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize<Calculation>(this, options);
-        }
     }
 }
-
-//{
-//  "Id": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
-//  "Name": "postal_codes_nc.csv",
-//  "DisplayName": "postal_codes_nc.csv",
-//  "Path": "/simulations/postal_codes_nc.csv",
-//  "LastModified": "2020-02-24T22:13:23Z",
-//  "Size": 61273,
-//  "MediaType": "text/csv",
-//  "IsFolder": false,
-//  "ETag": "\"0x8D7B976C3E20740\"",
-//  "FileLocator": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
-//  "LastModifiedBy": null
-//}
