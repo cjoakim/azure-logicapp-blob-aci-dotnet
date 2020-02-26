@@ -10,7 +10,7 @@ export RUNTYPE=populate_storage_blobs
 
 export POPULATE_STORAGE_RANDOM_PCT=101
 export POPULATE_STORAGE_DELAY=3
-export POPULATE_STORAGE_MAX_COUNT=0
+export POPULATE_STORAGE_MAX_COUNT=10
 export TARGET_BLOB_CONTAINER=processed
 
 # these are used to simulate the processing of a blob in the Logic App
