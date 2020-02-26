@@ -19,3 +19,6 @@ export SOURCE_BLOB_PATH=/simulations/benjamin_hebert_1582653235.csv
 
 dotnet build
 dotnet run 
+
+# "@{concat('c-', workflow().run.name)}"
+# "@{toLower(concat('c-', workflow().run.name))}"
