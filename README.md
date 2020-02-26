@@ -1,6 +1,17 @@
 # azure-logicapp-blob-aci-dotnet
 
-Azure Logic App triggered by Azure Storage Blobs, executing an ACI container with DotNet Core code
+Azure Logic App triggered by Azure Storage Blobs, executing an ACI container with DotNet Core code.
+
+## The Application
+
+- Running race CSV rows for individual runners are uploaded to an Azure Storage **source** container
+- An Azure Logic App is triggered for each of these new Storage blobs
+- The Logic App does the following:
+  - Gets the Triggering information
+  - Reads the Triggering CSV blob
+  - Parses the CSV, performs pace and speed calculations with the M26 library
+  - Stores the resulting calculation as JSON in a **target** Storage container
+  - Deletes the triggering blob from the **source** Storage container
 
 ---
 
@@ -14,16 +25,25 @@ $ dotnet --version
 $ dotnet new console -o blobs
 $ cd blobs
 $ dotnet add package Microsoft.Azure.Storage.Blob
+$ dotnet add package Joakimsoftware.M26 --version 1.0.0
 $ dotnet build
 $ dotnet run
 Hello World!
+```
+
+### Execute the compiled non-containerized code
+
+Upload a CSV row to the source blob container, then:
+
+```
+$ ./run.sh 
 ```
 
 ### Create and Execute the Docker Container
 
 ```
 $ ./containerize.sh 
-$ docker run -d -e xxx=yyy cjoakim/azure-blobs-core:latest
+$ .compose.sh up
 ```
 
 ---
@@ -40,16 +60,16 @@ The JSON triggerBody() looks like this:
 
 ```
 {
-  "Id": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
-  "Name": "postal_codes_nc.csv",
-  "DisplayName": "postal_codes_nc.csv",
-  "Path": "/simulations/postal_codes_nc.csv",
-  "LastModified": "2020-02-24T22:13:23Z",
-  "Size": 61273,
+  "Id": "JTJmc2ltdWxhdGlvbnMlMmZzdGFuX29ycl8xNTgyNzU4NjM2LmNzdg==",
+  "Name": "stan_orr_1582758636.csv",
+  "DisplayName": "stan_orr_1582758636.csv",
+  "Path": "/simulations/stan_orr_1582758636.csv",
+  "LastModified": "2020-02-26T23:10:36Z",
+  "Size": 96,
   "MediaType": "text/csv",
   "IsFolder": false,
-  "ETag": "\"0x8D7B976C3E20740\"",
-  "FileLocator": "JTJmc2ltdWxhdGlvbnMlMmZwb3N0YWxfY29kZXNfbmMuY3N2",
+  "ETag": "\"0x8D7BB11167352C9\"",
+  "FileLocator": "JTJmc2ltdWxhdGlvbnMlMmZzdGFuX29ycl8xNTgyNzU4NjM2LmNzdg==",
   "LastModifiedBy": null
 }
 ```
@@ -68,24 +88,28 @@ The JSON triggerBody() looks like this:
                         "properties": {
                             "containers": [
                                 {
-                                    "name": "c1",
+                                    "name": "@{string(variables('runid'))}",
                                     "properties": {
                                         "environmentVariables": [
                                             {
-                                                "name": "AZURE_STORAGE_ACCOUNT",
-                                                "value": "cjoakimstorage"
+                                                "name": "SOURCE_BLOB_NAME",
+                                                "value": "@triggerBody()['Name']"
                                             },
                                             {
-                                                "name": "BLOB_ID",
-                                                "value": "@{triggerBody()['Id']}"
+                                                "name": "SOURCE_BLOB_PATH",
+                                                "value": "@triggerBody()['Path']"
                                             },
                                             {
-                                                "name": "BLOB_NAME",
-                                                "value": "@{triggerBody()['Name']}"
+                                                "name": "AZURE_STORAGE_CONNECTION_STRING",
+                                                "value": "your-connection-string"
                                             },
                                             {
-                                                "name": "BLOB_PATH",
-                                                "value": "@{triggerBody()['Path']}"
+                                                "name": "RUNTYPE",
+                                                "value": "logic_app_process_blob"
+                                            },
+                                            {
+                                                "name": "TARGET_BLOB_CONTAINER",
+                                                "value": "processed"
                                             }
                                         ],
                                         "image": "cjoakim/azure-blobs-core:latest",
@@ -112,19 +136,23 @@ The JSON triggerBody() looks like this:
                         }
                     },
                     "method": "put",
-                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourceGroups/@{encodeURIComponent('cjoakim-logic')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(string('aci-group'))}",
+                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourceGroups/@{encodeURIComponent('cjoakim-logic')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(variables('runid'))}",
                     "queries": {
                         "x-ms-api-version": "2017-10-01-preview"
                     }
                 },
-                "runAfter": {},
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
                 "type": "ApiConnection"
             },
             "Delay": {
                 "inputs": {
                     "interval": {
-                        "count": 40,
-                        "unit": "Second"
+                        "count": 1,
+                        "unit": "Minute"
                     }
                 },
                 "runAfter": {
@@ -134,6 +162,26 @@ The JSON triggerBody() looks like this:
                 },
                 "type": "Wait"
             },
+            "Delete_container_group": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['aci']['connectionId']"
+                        }
+                    },
+                    "method": "delete",
+                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourceGroups/@{encodeURIComponent('cjoakim-logic')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(variables('runid'))}",
+                    "queries": {
+                        "x-ms-api-version": "2017-10-01-preview"
+                    }
+                },
+                "runAfter": {
+                    "Get_logs_of_a_container": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
             "Get_logs_of_a_container": {
                 "inputs": {
                     "host": {
@@ -142,7 +190,7 @@ The JSON triggerBody() looks like this:
                         }
                     },
                     "method": "get",
-                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourceGroups/@{encodeURIComponent('cjoakim-logic')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent('aci-group')}/containers/@{encodeURIComponent('c1')}/logs",
+                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourceGroups/@{encodeURIComponent('cjoakim-logic')}/providers/Microsoft.ContainerInstance/containerGroups/@{encodeURIComponent(variables('runid'))}/containers/@{encodeURIComponent(string(variables('runid')))}/logs",
                     "queries": {
                         "x-ms-api-version": "2017-10-01-preview"
                     }
@@ -153,6 +201,19 @@ The JSON triggerBody() looks like this:
                     ]
                 },
                 "type": "ApiConnection"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "runid",
+                            "type": "string",
+                            "value": "@{toLower(concat('c-', workflow().run.name))}"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
             }
         },
         "contentVersion": "1.0.0.0",
