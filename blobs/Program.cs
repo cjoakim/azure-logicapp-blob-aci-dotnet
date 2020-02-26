@@ -75,25 +75,32 @@ namespace blobs
         {
             string[] csvLines = readCsvDataFile();
             int randomness = populateStorageRandomness();
+            int maxCount = EnvVars.intValue(Constants.POPULATE_STORAGE_MAX_COUNT, 999);
             int sleepMs = EnvVars.intValue(Constants.POPULATE_STORAGE_DELAY, Constants.DEFAULT_POPULATE_STORAGE_DELAY);
+            int actualCount = 0;
             Console.WriteLine("populateStorageBlobs(), randomness: {0}", randomness);
+            Console.WriteLine("populateStorageBlobs(), maxCount: {0}", maxCount);
             Console.WriteLine("populateStorageBlobs(), sleepMs: {0}", sleepMs);
 
             for (int i = 1; i < csvLines.Length; i++)
             {
-                string line = csvLines[i];
-                string[] tokens = line.Split('|');
-                if (tokens.Length == 16)
+                if (actualCount < maxCount)
                 {
-                    int x = random.Next(100);
-                    if (x < randomness)
+                    string line = csvLines[i];
+                    string[] tokens = line.Split('|');
+                    if (tokens.Length == 16)
                     {
-                        string runnerName = tokens[2].Replace(' ', '_').ToLower();
-                        string blobName = (runnerName + "_" + epochTime() + ".csv");
-                        Console.WriteLine("{0} -> {1}", blobName, line);
-                        sourceBlobContainerClient.UploadBlob(
-                            blobName, generateStreamFromString(line));
-                        sleep(sleepMs);
+                        int x = random.Next(100);
+                        if (x < randomness)
+                        {
+                            string runnerName = tokens[2].Replace(' ', '_').ToLower();
+                            string blobName = (runnerName + "_" + epochTime() + ".csv");
+                            Console.WriteLine("{0} -> {1}", blobName, line);
+                            sourceBlobContainerClient.UploadBlob(
+                                blobName, generateStreamFromString(line));
+                            actualCount++;
+                            sleep(sleepMs);
+                        }
                     }
                 }
             }

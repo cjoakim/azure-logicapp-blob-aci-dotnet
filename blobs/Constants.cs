@@ -10,6 +10,7 @@ namespace blobs
         public const string TARGET_BLOB_CONTAINER = "TARGET_BLOB_CONTAINER";
         public const string POPULATE_STORAGE_RANDOM_PCT = "POPULATE_STORAGE_RANDOM_PCT";
         public const string POPULATE_STORAGE_DELAY = "POPULATE_STORAGE_DELAY";
+        public const string POPULATE_STORAGE_MAX_COUNT = "POPULATE_STORAGE_MAX_COUNT";
         public const string SOURCE_BLOB_NAME = "SOURCE_BLOB_NAME";
         public const string SOURCE_BLOB_PATH = "SOURCE_BLOB_PATH";
 
