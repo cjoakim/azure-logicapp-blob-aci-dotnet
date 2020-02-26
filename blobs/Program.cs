@@ -150,12 +150,12 @@ namespace blobs
             if (sourceBlobName != null)
             {
                 Console.WriteLine("logicAppProcessBlob: {0} in {1}", sourceBlobName, sourceBlobContainerName);
-                BlobClient blob = sourceBlobContainerClient.GetBlobClient(sourceBlobName);
+                BlobClient sourceBlob = sourceBlobContainerClient.GetBlobClient(sourceBlobName);
 
                 string content = null;
                 using (var memoryStream = new MemoryStream())
                 {
-                    blob.DownloadTo(memoryStream);
+                    sourceBlob.DownloadTo(memoryStream);
                     content = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
                 }
 
@@ -171,9 +171,14 @@ namespace blobs
                         string targetBlobName = sourceBlobName + ".json";
                         Console.WriteLine("Calculation json:\n{0}", json);
 
+                        // Save the result of the calculation to a blob in the target container
                         targetBlobContainerClient.UploadBlob(
                             targetBlobName, generateStreamFromString(json));
-                        Console.WriteLine("Blob written: {0} {1}", targetBlobContainerName, targetBlobName);
+                        Console.WriteLine("Target blob written: {0} {1}", targetBlobContainerName, targetBlobName);
+
+                        // Cleanup; delete the source blob from the source container
+                        sourceBlobContainerClient.DeleteBlob(sourceBlobName);
+                        Console.WriteLine("Source blob deleted: {0} {1}", sourceBlobContainerName, sourceBlobName);
                     }
                 }
             }

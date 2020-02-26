@@ -15,6 +15,7 @@ namespace blobs
         public const string SOURCE_BLOB_PATH = "SOURCE_BLOB_PATH";
 
         // Default and other values:
+        public const string APP_VERSION = "2020/02/26 18:00";
         public const string DEFAULT_SOURCE_CONTAINER = "simulations";
         public const string DEFAULT_TARGET_CONTAINER = "processed";
         public const int    DEFAULT_POPULATE_STORAGE_RANDOM_PCT = 5;  // randomly choose 5% of the csv rows read

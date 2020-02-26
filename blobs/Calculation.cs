@@ -29,6 +29,7 @@ namespace blobs
         public string gunTime { get; set; }
 
         // additional calculated fields:
+        public string appVersion { get; set; }
         public double miles { get; set; }
         public string elapsedTime { get; set; }
         public string pacePerMile { get; set; }
@@ -59,6 +60,7 @@ namespace blobs
                 gunTime      = tokens[15];
 
                 // additional calculated fields:
+                this.appVersion = Constants.APP_VERSION;
                 Distance d = new Distance(26.2);
                 this.miles = d.asMiles();
 
