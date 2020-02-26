@@ -1,5 +1,10 @@
 ## cj
 
+admin/bin/
+admin/include/
+admin/lib/
+admin/man/
+
 **/tmp/
 
 
