@@ -77,24 +77,23 @@ namespace blobs
             int randomness = populateStorageRandomness();
             int sleepMs = EnvVars.intValue(Constants.POPULATE_STORAGE_DELAY, Constants.DEFAULT_POPULATE_STORAGE_DELAY);
             Console.WriteLine("populateStorageBlobs(), randomness: {0}", randomness);
+            Console.WriteLine("populateStorageBlobs(), sleepMs: {0}", sleepMs);
 
-            for (int i = 0; i < csvLines.Length; i++)
+            for (int i = 1; i < csvLines.Length; i++)
             {
-                if (i > 0)
+                string line = csvLines[i];
+                string[] tokens = line.Split('|');
+                if (tokens.Length == 16)
                 {
-                    string line = csvLines[i];
-                    string[] tokens = line.Split('|');
-                    if (tokens.Length == 16)
+                    int x = random.Next(100);
+                    if (x < randomness)
                     {
-                        int x = random.Next(100);
-                        if (x < randomness)
-                        {
-                            string runnerName = tokens[2].Replace(' ', '_').ToLower();
-                            string blobName = (runnerName + "_" + epochTime() + ".csv");
-                            Console.WriteLine("{0} -> {1}", blobName, line);
-                            sourceBlobContainerClient.UploadBlob(
-                                blobName, generateStreamFromString(line));
-                        }
+                        string runnerName = tokens[2].Replace(' ', '_').ToLower();
+                        string blobName = (runnerName + "_" + epochTime() + ".csv");
+                        Console.WriteLine("{0} -> {1}", blobName, line);
+                        sourceBlobContainerClient.UploadBlob(
+                            blobName, generateStreamFromString(line));
+                        sleep(sleepMs);
                     }
                 }
             }
@@ -162,8 +161,12 @@ namespace blobs
                     if (tokens.Length == 16) {
                         Calculation c = new Calculation(content);
                         string json = c.toJSON();
-                        Console.WriteLine("json:\n{0}", json);
+                        string targetBlobName = sourceBlobName + ".json";
+                        Console.WriteLine("Calculation json:\n{0}", json);
 
+                        targetBlobContainerClient.UploadBlob(
+                            targetBlobName, generateStreamFromString(json));
+                        Console.WriteLine("Blob written: {0} {1}", targetBlobContainerName, targetBlobName);
                     }
                 }
             }
@@ -173,7 +176,7 @@ namespace blobs
         }
 
         static int toInt(string s) {
-            return (int)decimal.Parse(s);
+            return (int) decimal.Parse(s);
         }
 
         static string getSourceBlobContainerName()
