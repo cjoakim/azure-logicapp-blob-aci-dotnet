@@ -269,10 +269,10 @@ Compile and containerize the DotNet Core code:
 $ ./containerize.sh 
 ```
 
-Use **Docker Compose** to simulate the execution of the ACI by
+Use **Docker Compose** to simulate the execution of the ACI in the Logic App by
 passing it environment variables.  See file **docker-compose.yml**.
 ```
-$ .compose.sh up
+$ /.compose.sh up
 ```
 
 Once testing is completed, upload the contaner to your **Azure Container Registry (ACR)**.
@@ -304,3 +304,9 @@ A complete system test includes:
 - https://www.nuget.org/packages/Joakimsoftware.M26/
 - https://github.com/cjoakim/m26-cs
 - https://docs.microsoft.com/en-us/dotnet/api/azure.storage.blobs?view=azure-dotnet
+
+### Pricing
+
+- https://azure.microsoft.com/en-us/pricing/details/logic-apps/
+- https://azure.microsoft.com/en-us/pricing/details/container-instances/
+- https://azure.microsoft.com/en-us/pricing/details/storage/blobs/
