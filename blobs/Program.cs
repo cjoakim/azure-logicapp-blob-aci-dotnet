@@ -1,10 +1,11 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using System;
 using System.IO;
 
 namespace blobs
 {
-    // This class executes BOTH of the following functions:
+    // Instances of this class execute one of the following main functions:
     // 1) It is used to populate the triggering storage container with CSV data from 
     //    randomly selected rows in the 'data/20190317-asheville-marathon.csv' file.
     //    This is done to trigger the Azure Logic App.
@@ -13,6 +14,8 @@ namespace blobs
     //    new csv-blob in the Azure Storage container.  This logic will parse the csv,
     //    execute M26-library pace and speed calculations, and store the resulting JSON
     //    object in the target Storage container.
+    //
+    // Chris Joakim, Microsoft, 2020/02/28
 
     class Program
     {
@@ -37,6 +40,12 @@ namespace blobs
                     break;
                 case "populate_storage_blobs":
                     populateStorageBlobs();
+                    break;
+                case "delete_source_blobs":
+                    deleteSourceBlobs();
+                    break;
+                case "download_target_blobs":
+                    downloadTargetBlobs();
                     break;
                 default:
                     logicAppProcessBlob();
@@ -104,6 +113,7 @@ namespace blobs
                     }
                 }
             }
+            Console.WriteLine("populateStorageBlobs; blobs written this run: {0}", actualCount);
         }
 
         public static Stream generateStreamFromString(string s)
@@ -208,6 +218,43 @@ namespace blobs
         static void sleep(int milliseconds)
         {
             System.Threading.Thread.Sleep(milliseconds);
+        }
+
+        static void deleteSourceBlobs()
+        {
+            Console.WriteLine("deleteSourceBlobs");
+
+            foreach(BlobItem blob in sourceBlobContainerClient.GetBlobs())
+            {
+                sourceBlobContainerClient.DeleteBlob(blob.Name);
+                Console.WriteLine("Source blob deleted: {0} {1}", sourceBlobContainerName, blob.Name);
+            }
+        }
+
+        static void downloadTargetBlobs()
+        {
+            Console.WriteLine("downloadTargetBlobs");
+            string dir = Directory.GetCurrentDirectory();
+            int delete = EnvVars.intValue(Constants.DELETE_AFTER_DOWNLOAD, 0);
+
+            foreach (BlobItem blobItem in targetBlobContainerClient.GetBlobs())
+            {
+                string blobname = blobItem.Name;
+                string outfile = dir + "/tmp/" + blobname;
+                Console.WriteLine("downloading: {0} -> {1}", blobname, outfile);
+
+                BlobClient blobClient = targetBlobContainerClient.GetBlobClient(blobname);
+                BlobDownloadInfo download = blobClient.Download();
+                using (FileStream file = File.OpenWrite(outfile))
+                {
+                    download.Content.CopyTo(file);
+                    if (delete > 0)
+                    {
+                        Console.WriteLine("deleting: {0}", blobname);
+                        targetBlobContainerClient.DeleteBlob(blobname);
+                    }
+                }
+            }
         }
     }
 }

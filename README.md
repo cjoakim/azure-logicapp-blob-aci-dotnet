@@ -280,3 +280,4 @@ The JSON triggerBody() looks like this:
 - https://www.klaine.net/example-azure-container-instances-with-logic-apps/
 - https://www.nuget.org/packages/Joakimsoftware.M26/
 - https://github.com/cjoakim/m26-cs
+- https://docs.microsoft.com/en-us/dotnet/api/azure.storage.blobs?view=azure-dotnet

@@ -1,5 +1,7 @@
 ## cj
 
+.vscode/
+
 # python virtual environment files
 admin/bin/
 admin/include/

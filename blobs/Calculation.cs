@@ -6,6 +6,7 @@ namespace blobs
     // This is a POCO class that executes the M26-based Pace and Speed calculations
     // of the given CSV Blob data.  The return 'toJSON()' value is populated in the
     // target storage container.
+    // Chris Joakim, Microsoft, 2020/02/28
 
     class Calculation {
 

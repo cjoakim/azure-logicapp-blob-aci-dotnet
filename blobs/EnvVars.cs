@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace blobs
 {
+    // This class reads environment variables for this app.
+    // Chris Joakim, Microsoft, 2020/02/28
+
     static class EnvVars
     {
         public static string value(string name, string defaultValue = null)

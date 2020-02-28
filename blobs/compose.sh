@@ -7,6 +7,6 @@
 # $ ./compose.sh ps
 # $ ./compose.sh down
 #
-# Chris Joakim, Microsoft, 2020/02/24
+# Chris Joakim, Microsoft, 2020/02/28
 
 docker-compose $1 $2 $3 

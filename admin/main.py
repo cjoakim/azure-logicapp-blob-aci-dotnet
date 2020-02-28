@@ -1,5 +1,5 @@
 # Python program Locic App and Azure Container Instance administration.
-# Chris Joakim, Microsoft, 2020/02/26
+# Chris Joakim, Microsoft, 2020/02/28
 
 import csv
 import json
