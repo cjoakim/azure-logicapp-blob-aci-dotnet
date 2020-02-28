@@ -7,12 +7,14 @@ Azure Logic App triggered by Azure Storage Blobs, executing an ACI container wit
 - Running race CSV rows for individual runners are uploaded to an Azure Storage **source** container
 - An Azure Logic App is triggered for each of these new Storage blobs
 - The Logic App does the following:
-  - Gets the Triggering information
-  - Reads the Triggering CSV blob
-  - Parses the CSV, performs pace and speed calculations with the M26 library
-  - Stores the resulting calculation as JSON in a **target** Storage container
-  - Deletes the triggering blob from the **source** Storage container
-
+  - Gets the Triggering information, and passes it to a new **Azure Container Instance**
+  - The Azure Container Instance then:
+    - Reads the Triggering CSV blob
+    - Parses the CSV, performs pace and speed calculations with the M26 library
+    - Stores the resulting calculation as JSON in a **target** Storage container
+    - Deletes the triggering blob from the **source** Storage container
+  - Deletes the Azure Container Instance after a delay
+  
 ---
 
 ## DotNet Core Project Creation
@@ -270,7 +272,21 @@ The JSON triggerBody() looks like this:
 }
 ```
 
+---
 
+## System Testing
+
+A complete system test includes:
+
+- Execute **./delete_blobs.sh** to delete any remnant source/simulation blobs
+- Execute **./download_blobs.sh** to delete any remnant target/calculated blobs
+- Remove the files in the **tmp/** directory
+- Execute **./populate_blobs.sh** to upload randomized source/simulation blobs
+- Observe the state of the two blob containers with **Azure Storage Explorer**
+- Observe the **Run History** (image below) of the Logic App in Azure Portal
+- Execute **./download_blobs.sh** to download the new target/calculated blobs
+
+![logic-app-run-history](img/logic-app-run-history.png)
 
 ---
 
