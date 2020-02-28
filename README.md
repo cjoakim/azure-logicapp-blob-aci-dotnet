@@ -66,6 +66,9 @@ The JSON triggerBody() looks like this:
 
 ### Azure Logic App Code View 
 
+Note the use of **@triggerBody()**, and the **runid** variable derived
+from **workflow().run.name**.
+
 ```
 {
     "definition": {
