@@ -7,14 +7,14 @@ Azure Logic App triggered by Azure Storage Blobs, executing an ACI container wit
 - Running race CSV rows for individual runners are uploaded to an Azure Storage **source** container
 - An Azure Logic App is triggered for each of these new Storage blobs
 - The Logic App does the following:
-  - Gets the Triggering information, and passes it to a new **Azure Container Instance**
+  - Gets the Triggering information (see sample JSON below), and passes it to a new **Azure Container Instance**
   - The Azure Container Instance then:
     - Reads the Triggering CSV blob
     - Parses the CSV, performs pace and speed calculations with the M26 library
     - Stores the resulting calculation as JSON in a **target** Storage container
     - Deletes the triggering blob from the **source** Storage container
   - Deletes the Azure Container Instance after a delay
-  
+
 ---
 
 ## DotNet Core Project Creation
