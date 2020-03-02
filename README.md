@@ -61,7 +61,7 @@ and working code.
 
 ### Sample Blob Trigger JSON
 
-The JSON triggerBody() looks like this:
+The JSON **triggerBody()** looks like this:
 
 ```
 {
