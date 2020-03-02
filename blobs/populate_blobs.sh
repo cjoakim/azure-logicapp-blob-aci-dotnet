@@ -6,7 +6,7 @@
 
 export RUNTYPE=populate_storage_blobs
 export POPULATE_STORAGE_RANDOM_PCT=15
-export POPULATE_STORAGE_MAX_COUNT=50
+export POPULATE_STORAGE_MAX_COUNT=20
 export POPULATE_STORAGE_DELAY=250
 
 # AZURE_STORAGE_CONNECTION_STRING is already an env var on my workstatiob.

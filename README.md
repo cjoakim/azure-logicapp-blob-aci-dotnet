@@ -15,6 +15,22 @@ Azure Logic App triggered by Azure Storage Blobs, executing an ACI container wit
     - Deletes the triggering blob from the **source** Storage container
   - Deletes the Azure Container Instance after a delay
 
+### CSV Data
+
+#### Source
+
+https://ashevillemarathon.com/wp-content/uploads/2019/03/marathonoverall.htm
+
+#### Sample
+
+```
+place,overall_place,name,city_st,bib,age,10K_rank,10K_time,bridge1_rank,bridge1_time,23m_rank,23m_time,finish_rank,finish_time,chip_time,gun_time
+1|1|Ashley Carreon|Oklahoma City OK|360|30|1|40:23.5|1|1:06:46.9|1|2:29:51.9|1|2:52:32.3|2:52:32.3|2:52:32.3
+1|2|Nathan Stewart|Cincinnati OH|1010|36|1|41:23.2|2|1:08:28.5|1|2:31:58.2|1|2:53:55.8|2:53:55.8|2:53:55.8
+2|3|Daniel Matena|Charlotte NC|1323|35|4|41:41.3|4|1:09:11.0|2|2:33:55.2|2|2:54:33.5|2:54:33.5|2:54:33.5
+
+```
+
 ---
 
 ## DotNet Core Project Creation
