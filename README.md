@@ -32,6 +32,12 @@ place|overall_place|name|city_st|bib|age|10K_rank|10K_time|bridge1_rank|bridge1_
 
 ---
 
+## Azure Architecture
+
+![architecture](img/architecture-blob-logicapp-aci-acr.png)
+
+---
+
 ## DotNet Core Project Creation
 
 ### Bootstrap the DotNet Core Project
