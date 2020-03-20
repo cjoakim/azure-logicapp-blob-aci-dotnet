@@ -1,10 +1,10 @@
 # regular expressions
 
-
 ![quote](img/regular-expressions-quote.png)
 
 ## Examples
 
+Quiz: what does regular expression this match?
 ```
 /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
 ```
