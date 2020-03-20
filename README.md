@@ -38,6 +38,10 @@ place|overall_place|name|city_st|bib|age|10K_rank|10K_time|bridge1_rank|bridge1_
 
 ---
 
+## Events + Serverless + Docker Containers + ACI = Simplicity
+
+---
+
 ## DotNet Core Project Creation
 
 ### Bootstrap the DotNet Core Project
