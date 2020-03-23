@@ -15,7 +15,7 @@ namespace blobs
     //    execute M26-library pace and speed calculations, and store the resulting JSON
     //    object in the target Storage container.
     //
-    // Chris Joakim, Microsoft, 2020/02/28
+    // Chris Joakim, Microsoft, 2020/03/20
 
     class Program
     {
@@ -57,7 +57,7 @@ namespace blobs
         {
             try
             {
-                EnvVars.displayAll();
+                //EnvVars.displayAll();
                 runtype = EnvVars.value(Constants.RUNTYPE, "undefined");
                 Console.WriteLine("start() runtype is: {0}", runtype);
                 sourceBlobContainerName = getSourceBlobContainerName();
@@ -66,13 +66,13 @@ namespace blobs
 
                 Console.WriteLine("sourceBlobContainerName: {0}", sourceBlobContainerName);
                 Console.WriteLine("targetBlobContainerName: {0}", targetBlobContainerName);
-                Console.WriteLine("storageConnectionString: {0}", storageConnectionString);
+                //Console.WriteLine("storageConnectionString: {0}", storageConnectionString);
 
                 blobServiceClient = new BlobServiceClient(storageConnectionString);
                 sourceBlobContainerClient = new BlobContainerClient(storageConnectionString, sourceBlobContainerName);
                 targetBlobContainerClient = new BlobContainerClient(storageConnectionString, targetBlobContainerName);
-                Console.WriteLine("sourceBlobContainerClient: {0}", sourceBlobContainerClient);
-                Console.WriteLine("targetBlobContainerClient: {0}", targetBlobContainerClient);
+                //Console.WriteLine("sourceBlobContainerClient: {0}", sourceBlobContainerClient);
+                //Console.WriteLine("targetBlobContainerClient: {0}", targetBlobContainerClient);
             }
             catch (Exception e)
             {
