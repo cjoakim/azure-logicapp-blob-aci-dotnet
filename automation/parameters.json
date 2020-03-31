@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "connections_aci_name": {
+            "value": "aci"
+        },
+        "connections_azureblob_name": {
+            "value": "azureblob"
+        },
+        "workflows_cjoakimlogicaci_name": {
+            "value": "cjoakimlogicaciarm"
+        },
+        "containerGroups_c_08586184336278477352290832571cu75_name": {
+            "value": "c-123"
+        },
+        "containerGroups___encodeURIComponent_variables__runid_____externalid": {
+            "value": "123"
+        }
+    }
+}
