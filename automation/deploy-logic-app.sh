@@ -19,6 +19,7 @@
 #
 # Visual Studio Logic App Tools
 # https://marketplace.visualstudio.com/items?itemName=VinaySinghMSFT.AzureLogicAppsToolsForVS2019
+# https://docs.microsoft.com/en-us/azure/logic-apps/manage-logic-apps-with-visual-studio#open-in-visual-studio
 
 # azure-specific values
 resource_group="cjoakim-logic5"
