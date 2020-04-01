@@ -2,7 +2,7 @@
 
 # Bash script to execute the Azure CLI (az) to deploy an 
 # Azure Resource Manager (ARM) template.
-# Chris Joakim, Microsoft, 2020/03/31
+# Chris Joakim, Microsoft, 2020/04/01
 #
 # Azure CLI (Command Line Interface)
 # https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest
@@ -16,7 +16,9 @@
 
 # VSC Logic App Extension
 # https://docs.microsoft.com/en-us/azure/logic-apps/quickstart-create-logic-apps-visual-studio-code
-
+#
+# Visual Studio Logic App Tools
+# https://marketplace.visualstudio.com/items?itemName=VinaySinghMSFT.AzureLogicAppsToolsForVS2019
 
 # azure-specific values
 resource_group="cjoakim-logic5"
