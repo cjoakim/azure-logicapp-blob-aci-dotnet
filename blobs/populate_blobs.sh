@@ -2,7 +2,7 @@
 
 # Bash script to execute Program.cs locally, outside of Docker,
 # to populate the source/simulations container with randomized blobs.
-# Chris Joakim, Microsoft, 2020/02/28
+# Chris Joakim, Microsoft, 2020/08/11
 
 export RUNTYPE=populate_storage_blobs
 export POPULATE_STORAGE_RANDOM_PCT=15

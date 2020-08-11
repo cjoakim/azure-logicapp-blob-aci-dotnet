@@ -22,7 +22,7 @@
 # https://docs.microsoft.com/en-us/azure/logic-apps/manage-logic-apps-with-visual-studio#open-in-visual-studio
 
 # azure-specific values
-resource_group="cjoakim-logic5"
+resource_group="cjoakim-logic-aci"
 rg_region="eastus"
 
 # construct unique time-based names for the deployment

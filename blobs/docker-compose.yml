@@ -5,8 +5,8 @@ services:
     environment:
     - RUNTYPE=logic_app_process_blob
     - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
-    - SOURCE_BLOB_PATH=/simulations/benjamin_hebert_1582653235.csv
-    - SOURCE_BLOB_NAME=benjamin_hebert_1582653235.csv
+    - SOURCE_BLOB_PATH=/simulations/rachael_hall_1597158647.csv
+    - SOURCE_BLOB_NAME=rachael_hall_1597158647.csv
     - TARGET_BLOB_CONTAINER=processed
     - POPULATE_STORAGE_RANDOM_PCT=5
     - POPULATE_STORAGE_MAX_COUNT=20
